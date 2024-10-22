@@ -1,0 +1,1 @@
+ALTER TABLE url ADD COLUMN user_id BIGINT REFERENCES "user"(id);
