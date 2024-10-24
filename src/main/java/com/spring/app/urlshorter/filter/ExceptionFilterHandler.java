@@ -1,6 +1,5 @@
 package com.spring.app.urlshorter.filter;
 
-import com.spring.app.urlshorter.controller.user.SaveUserRequest;
 import com.spring.app.urlshorter.exception.ApiException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;

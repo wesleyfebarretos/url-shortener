@@ -11,8 +11,8 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
-import org.springframework.test.web.servlet.result.MockMvcResultHandlers;
 
+import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
@@ -38,7 +38,7 @@ public class UserControllerTests extends BaseIntegrationTests {
                             .contentType(MediaType.APPLICATION_JSON)
                             .content(asJsonString(req))
                     )
-                    .andDo(MockMvcResultHandlers.print())
+                    .andDo(print())
                     .andExpect(status().isCreated())
                     .andExpect(jsonPath("$.firstName").value(req.firstName()))
                     .andExpect(jsonPath("$.lastName").value(req.lastName()))
@@ -73,7 +73,7 @@ public class UserControllerTests extends BaseIntegrationTests {
                             .contentType(MediaType.APPLICATION_JSON)
                             .content(asJsonString(req))
                     )
-                    .andDo(MockMvcResultHandlers.print())
+                    .andDo(print())
                     .andExpect(status().isBadRequest())
                     .andExpect(jsonPath("$.code").value(HttpStatus.BAD_REQUEST.value()))
                     .andExpect(jsonPath("$.msg").value("username already exists"));
