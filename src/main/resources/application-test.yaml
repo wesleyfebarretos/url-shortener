@@ -1,0 +1,24 @@
+auth:
+  jwt_secret: ${JWT_SECRET:QjhRbWxmYmZWN0w1WUxUQ2xNc3pUTktNMGxMcm1oTHhMSnFCdUNmZUs0UWlFZldTRzkwSldickZFbjlSQ3M5NgpNMkEyZVo4eEE4ZWFudktNOUxhZHZ3PT0K}
+  jwt_expiration_in_hours: 10
+
+springdoc:
+  api-docs:
+    enabled: true
+  swagger-ui:
+    enabled: true
+    path: /swagger-ui.html
+
+spring:
+  datasource:
+    url: jdbc:postgresql://localhost:5432/url_shortener
+    username: ${DB_NAME:postgres}
+    password: ${DB_PASSWORD:postgres}
+
+  flyway:
+    enabled: true
+
+  jpa:
+    properties:
+      hibernate:
+        show_sql: true
