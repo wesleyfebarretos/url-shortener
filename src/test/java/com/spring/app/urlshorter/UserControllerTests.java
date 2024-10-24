@@ -108,7 +108,7 @@ public class UserControllerTests extends BaseIntegrationTests {
                             .contentType(MediaType.APPLICATION_JSON)
                             .content(asJsonString(authReq))
                     )
-                    .andDo(MockMvcResultHandlers.print())
+                    .andDo(print())
                     .andExpect(status().isOk())
                     .andExpect(jsonPath("$.token").isNotEmpty());
         }
@@ -137,7 +137,7 @@ public class UserControllerTests extends BaseIntegrationTests {
                             .contentType(MediaType.APPLICATION_JSON)
                             .content(asJsonString(authReq))
                     )
-                    .andDo(MockMvcResultHandlers.print())
+                    .andDo(print())
                     .andExpect(status().isUnauthorized())
                     .andExpect(jsonPath("$.code").value(HttpStatus.UNAUTHORIZED.value()))
                     .andExpect(jsonPath("$.msg").value("wrong password or username"));
