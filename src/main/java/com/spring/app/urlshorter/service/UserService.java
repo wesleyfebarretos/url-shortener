@@ -21,7 +21,10 @@ public class UserService {
     }
 
     public UserEntity save(UserEntity user) {
-        //  TODO: Encrypt password to save;
+        userRepository.findByUserName(user.getUserName())
+                .ifPresent((x) -> {
+                    throw ApiException.badRequestException("username already exists");
+                });
         return userRepository.save(user);
     }
 

@@ -1,9 +1,7 @@
 package com.spring.app.urlshorter.config;
 
 import com.spring.app.urlshorter.filter.JwtFilter;
-import jakarta.annotation.Nullable;
 import jakarta.servlet.http.HttpServletResponse;
-import lombok.AllArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -19,13 +17,24 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 public class SecurityConfig {
     private final JwtFilter jwtFilter;
 
-   @Bean
+    @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http.csrf()
                 .disable()
-               .authorizeHttpRequests((requests) -> requests
+                .authorizeHttpRequests((requests) -> requests
+                        .requestMatchers(
+                                "/user/auth",
+                                "/v3/**",
+                                "/swagger-ui/**",
+                                "/webjars/**",
+                                "/swagger-ui.html",
+                                "/swagger-resources/**",
+                                "/swagger-resources",
+                                "/v3/api-docs",
+                                "/v3/api-docs/**",
+                                "/v2/api-docs/**"
+                        ).permitAll()
                         .requestMatchers(HttpMethod.POST, "/user").permitAll()
-                        .requestMatchers(HttpMethod.POST, "/user/auth").permitAll()
                         .anyRequest().authenticated()
                 ).exceptionHandling().authenticationEntryPoint(
                         (request, response, ex) -> {
@@ -34,7 +43,6 @@ public class SecurityConfig {
                 );
 
         http.addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);
-
 
         return http.build();
     }

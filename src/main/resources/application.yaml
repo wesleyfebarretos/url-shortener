@@ -2,6 +2,10 @@ auth:
   jwt_secret: ${JWT_SECRET:QjhRbWxmYmZWN0w1WUxUQ2xNc3pUTktNMGxMcm1oTHhMSnFCdUNmZUs0UWlFZldTRzkwSldickZFbjlSQ3M5NgpNMkEyZVo4eEE4ZWFudktNOUxhZHZ3PT0K}
   jwt_expiration_in_hours: 10
 
+springdoc:
+  swagger-ui:
+    path: /swagger-ui.html
+
 spring:
   application:
     name: urlshorter

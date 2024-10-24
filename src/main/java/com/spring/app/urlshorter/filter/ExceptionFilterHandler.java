@@ -18,8 +18,8 @@ public class ExceptionFilterHandler {
         ), error.getStatusCode());
     }
 
-    @ExceptionHandler(value = RuntimeException.class)
-    public ResponseEntity<Map<String, String>> handleRuntimeException(RuntimeException error) {
+    @ExceptionHandler(value = Exception.class)
+    public ResponseEntity<Map<String, String>> handleException(Exception error) {
         return new ResponseEntity<>(Map.of(
                 "code", String.valueOf(HttpStatus.INTERNAL_SERVER_ERROR.value()),
                 "msg", error.getMessage()
