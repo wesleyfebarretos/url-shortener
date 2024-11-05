@@ -31,7 +31,7 @@ public class UrlService {
                 ZonedDateTime.now()
         );
 
-        if(oldUrl.isPresent()) {
+        if (oldUrl.isPresent()) {
             return oldUrl.get();
         }
 

@@ -22,3 +22,4 @@ spring:
     properties:
       hibernate:
         show_sql: true
+        generate_statistics: true

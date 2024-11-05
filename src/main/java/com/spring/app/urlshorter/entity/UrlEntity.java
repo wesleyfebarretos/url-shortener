@@ -2,12 +2,10 @@ package com.spring.app.urlshorter.entity;
 
 import jakarta.persistence.*;
 import lombok.*;
-import org.apache.catalina.User;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
 import java.time.ZonedDateTime;
-import java.util.Optional;
 
 @Entity
 @Table(name = "url")
@@ -41,12 +39,9 @@ public class UrlEntity {
     @UpdateTimestamp
     ZonedDateTime updatedAt;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", referencedColumnName = "id", insertable = false, updatable = false)
     UserEntity user;
-
-    @Column(name = "user_id")
-    Long userId;
 }
 
 

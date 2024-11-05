@@ -1,34 +1,36 @@
 package com.spring.app.urlshorter.controller.url;
 
 import com.spring.app.urlshorter.entity.UrlEntity;
+import com.spring.app.urlshorter.entity.UserEntity;
 import com.spring.app.urlshorter.service.UrlService;
 import io.jsonwebtoken.Claims;
+import jakarta.persistence.EntityManager;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.flywaydb.core.internal.util.JsonUtils;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
 import java.net.URI;
-import java.util.Map;
 
 @RestController
 @RequestMapping("url")
 @RequiredArgsConstructor
 public class UrlController {
     private final UrlService urlService;
+    private final EntityManager entityManager;
 
     @PostMapping
     public SaveUrlResponse save(HttpServletRequest req, @RequestBody @Valid SaveUrlRequest url) {
         Claims claims  =(Claims) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 
+        UserEntity userReference = entityManager.getReference(UserEntity.class, Long.valueOf(claims.get("id").toString()));
+
         UrlEntity newUrl = UrlEntity.builder()
                 .originalAddress(url.url())
-                .userId(Long.valueOf(claims.get("id").toString()))
+                .user(userReference)
                 .build();
 
         String scheme = req.getScheme();             // http or https

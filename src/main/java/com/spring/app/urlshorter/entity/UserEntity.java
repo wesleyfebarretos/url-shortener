@@ -40,6 +40,6 @@ public class UserEntity {
     @UpdateTimestamp
     ZonedDateTime updatedAt;
 
-    @OneToMany(mappedBy = "user")
+    @OneToMany(mappedBy = "user", fetch = FetchType.LAZY)
     List<UrlEntity> urls;
 }
