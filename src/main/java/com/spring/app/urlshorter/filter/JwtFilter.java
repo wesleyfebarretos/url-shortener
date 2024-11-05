@@ -1,6 +1,5 @@
 package com.spring.app.urlshorter.filter;
 
-import com.spring.app.urlshorter.service.UserService;
 import com.spring.app.urlshorter.util.JwtUtil;
 import io.jsonwebtoken.Claims;
 import jakarta.servlet.FilterChain;

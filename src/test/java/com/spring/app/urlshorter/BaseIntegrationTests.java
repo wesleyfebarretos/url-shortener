@@ -2,6 +2,7 @@ package com.spring.app.urlshorter;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.spring.app.urlshorter.repository.UserRepository;
+import com.spring.app.urlshorter.testutils.TestUtils;
 import org.junit.jupiter.api.BeforeEach;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -16,6 +17,7 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.web.servlet.MockMvc;
 import org.testcontainers.containers.PostgreSQLContainer;
 
+import java.time.ZonedDateTime;
 import java.util.List;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
@@ -23,7 +25,8 @@ import java.util.List;
 @AutoConfigureMockMvc
 @ActiveProfiles("test")
 public abstract class BaseIntegrationTests {
-    protected static final PostgreSQLContainer POSTGRES = new PostgreSQLContainer("postgres:16");
+    protected static final PostgreSQLContainer POSTGRES = new PostgreSQLContainer<>("postgres:16")
+            .withEnv("POSTGRES_TZ", ZonedDateTime.now().getZone().getId());
 
     @Autowired
     protected MockMvc mockMvc;
@@ -33,6 +36,9 @@ public abstract class BaseIntegrationTests {
 
     @Autowired
     protected List<JpaRepository<?,?>> repositories;
+
+    @Autowired
+    protected TestUtils testUtils;
 
     @BeforeEach
     public void beforeEach() {

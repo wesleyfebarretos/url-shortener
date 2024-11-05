@@ -23,14 +23,15 @@ public class UrlController {
     private final EntityManager entityManager;
 
     @PostMapping
+    @ResponseStatus(HttpStatus.CREATED)
     public SaveUrlResponse save(HttpServletRequest req, @RequestBody @Valid SaveUrlRequest url) {
         Claims claims  =(Claims) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 
-        UserEntity userReference = entityManager.getReference(UserEntity.class, Long.valueOf(claims.get("id").toString()));
+        UserEntity user = new UserEntity().setId(Long.valueOf(claims.get("id").toString()));
 
         UrlEntity newUrl = UrlEntity.builder()
                 .originalAddress(url.url())
-                .user(userReference)
+                .user(user)
                 .build();
 
         String scheme = req.getScheme();             // http or https
