@@ -12,6 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 
 import java.time.ZonedDateTime;
+import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -45,8 +46,12 @@ public class UrlControllerTests extends BaseIntegrationTests {
             UrlEntity url = urlRepository.findByOriginalAddressAndExpirationAtAfter(req.url(), ZonedDateTime.now())
                     .orElseThrow();
 
+            List<UrlEntity> urls = urlRepository.findAll();
+
             assertThat(url).extracting(UrlEntity::getOriginalAddress)
                     .isEqualTo(req.url());
+
+            assertThat(urls.size()).isEqualTo(1);
         }
 //
 //        @Test
