@@ -1,9 +1,9 @@
 package com.spring.app.urlshorter;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.spring.app.urlshorter.repository.UserRepository;
 import com.spring.app.urlshorter.testutils.TestUtils;
-import org.junit.jupiter.api.BeforeEach;
+import jakarta.persistence.EntityManager;
+import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -11,10 +11,11 @@ import org.springframework.boot.test.util.TestPropertyValues;
 import org.springframework.context.ApplicationContextInitializer;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.repository.CrudRepository;
+import org.springframework.test.annotation.Rollback;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.transaction.annotation.Propagation;
 import org.testcontainers.containers.PostgreSQLContainer;
 
 import java.time.ZonedDateTime;
@@ -24,6 +25,8 @@ import java.util.List;
 @ContextConfiguration(initializers = {BaseIntegrationTests.Initializer.class})
 @AutoConfigureMockMvc
 @ActiveProfiles("test")
+@Transactional
+@Rollback(false)
 public abstract class BaseIntegrationTests {
     protected static final PostgreSQLContainer POSTGRES = new PostgreSQLContainer<>("postgres:16")
             .withEnv("POSTGRES_TZ", ZonedDateTime.now().getZone().getId());
@@ -35,15 +38,14 @@ public abstract class BaseIntegrationTests {
     protected ObjectMapper objectMapper;
 
     @Autowired
-    protected List<JpaRepository<?,?>> repositories;
+    protected List<JpaRepository<?, ?>> repositories;
 
     @Autowired
     protected TestUtils testUtils;
 
-    @BeforeEach
-    public void beforeEach() {
-        repositories.forEach(CrudRepository::deleteAll);
-    }
+    @Autowired
+    protected EntityManager entityManager;
+
 
     protected String asJsonString(final Object obj) {
         try {

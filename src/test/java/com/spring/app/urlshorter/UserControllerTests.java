@@ -11,6 +11,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
+import org.springframework.test.annotation.Rollback;
 
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -25,6 +26,7 @@ public class UserControllerTests extends BaseIntegrationTests {
     @Nested
     class CreateUser {
         @Test
+        @Rollback
         @DisplayName("it should save an user")
         public void save() throws Exception {
             SaveUserRequest req = new SaveUserRequest(
@@ -52,6 +54,7 @@ public class UserControllerTests extends BaseIntegrationTests {
         }
 
         @Test
+        @Rollback
         @DisplayName("it should not save an user, cause has duplicated username")
         public void notSave() throws Exception {
             SaveUserRequest req = new SaveUserRequest(
@@ -85,6 +88,7 @@ public class UserControllerTests extends BaseIntegrationTests {
     @Nested
     class Auth {
         @Test
+        @Rollback
         @DisplayName("it should authenticate an user")
         public void auth() throws Exception {
             SaveUserRequest req = new SaveUserRequest(
@@ -114,6 +118,7 @@ public class UserControllerTests extends BaseIntegrationTests {
         }
 
         @Test
+        @Rollback
         @DisplayName("it should not authenticate an user")
         public void notAuth() throws Exception {
             SaveUserRequest req = new SaveUserRequest(

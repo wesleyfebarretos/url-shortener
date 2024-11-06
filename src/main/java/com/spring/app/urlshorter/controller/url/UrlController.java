@@ -44,6 +44,7 @@ public class UrlController {
 
         return new SaveUrlResponse(shortUrl.concat("/" + newEntity.getShortCode()));
     }
+
     @GetMapping("/{shortCode}")
     public ResponseEntity<Void> findOneByShortCode(@PathVariable String shortCode) {
         UrlEntity url = urlService.findByShortCode(shortCode);

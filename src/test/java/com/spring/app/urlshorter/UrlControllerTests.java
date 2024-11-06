@@ -2,6 +2,7 @@ package com.spring.app.urlshorter;
 
 import com.spring.app.urlshorter.controller.url.SaveUrlRequest;
 import com.spring.app.urlshorter.entity.UrlEntity;
+import com.spring.app.urlshorter.entity.UserEntity;
 import com.spring.app.urlshorter.repository.UrlRepository;
 import com.spring.app.urlshorter.testutils.TestUtils;
 import lombok.RequiredArgsConstructor;
@@ -10,11 +11,13 @@ import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
+import org.springframework.test.annotation.Rollback;
 
 import java.time.ZonedDateTime;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
@@ -27,11 +30,11 @@ public class UrlControllerTests extends BaseIntegrationTests {
     @Nested
     class CreateUrl {
         @Test
+        @Rollback
         @DisplayName("it should save an url")
         public void save() throws Exception {
             TestUtils.UserData user = testUtils.createUser();
 
-            System.out.println(user);
             SaveUrlRequest req = new SaveUrlRequest("https://google.com.br");
 
             mockMvc.perform(post("/url")
@@ -51,99 +54,42 @@ public class UrlControllerTests extends BaseIntegrationTests {
             assertThat(url).extracting(UrlEntity::getOriginalAddress)
                     .isEqualTo(req.url());
 
+            assertThat(url).extracting(UrlEntity::getShortCode)
+                    .isNotNull();
+
+            assertThat(url.getExpirationAt()).isAfter(ZonedDateTime.now());
+
             assertThat(urls.size()).isEqualTo(1);
         }
-//
-//        @Test
-//        @DisplayName("it should not save an user, cause has duplicated username")
-//        public void notSave() throws Exception {
-//            SaveUserRequest req = new SaveUserRequest(
-//                    "test",
-//                    "testing",
-//                    "testing@gmail.com",
-//                    "123"
-//            );
-//
-//            urlRepository.save(UserEntity.builder()
-//                    .firstName(req.firstName())
-//                    .lastName(req.lastName())
-//                    .userName(req.userName())
-//                    .password(req.password())
-//                    .build()
-//            );
-//
-//            mockMvc.perform(post("/user")
-//                            .contentType(MediaType.APPLICATION_JSON)
-//                            .content(asJsonString(req))
-//                    )
-//                    .andDo(print())
-//                    .andExpect(status().isBadRequest())
-//                    .andExpect(jsonPath("$.code").value(HttpStatus.BAD_REQUEST.value()))
-//                    .andExpect(jsonPath("$.msg").value("username already exists"));
-//
-//            assertThat(urlRepository.findAll().size()).isEqualTo(1);
-//        }
-//    }
-//
-//    @Nested
-//    class Auth {
-//        @Test
-//        @DisplayName("it should authenticate an user")
-//        public void auth() throws Exception {
-//            SaveUserRequest req = new SaveUserRequest(
-//                    "test",
-//                    "testing",
-//                    "testing@gmail.com",
-//                    "123"
-//            );
-//
-//            urlRepository.save(UserEntity.builder()
-//                    .firstName(req.firstName())
-//                    .lastName(req.lastName())
-//                    .userName(req.userName())
-//                    .password(req.password())
-//                    .build()
-//            );
-//
-//            AuthRequest authReq = new AuthRequest(req.userName(), req.password());
-//
-//            mockMvc.perform(post("/user/auth")
-//                            .contentType(MediaType.APPLICATION_JSON)
-//                            .content(asJsonString(authReq))
-//                    )
-//                    .andDo(print())
-//                    .andExpect(status().isOk())
-//                    .andExpect(jsonPath("$.token").isNotEmpty());
-//        }
-//
-//        @Test
-//        @DisplayName("it should not authenticate an user")
-//        public void notAuth() throws Exception {
-//            SaveUserRequest req = new SaveUserRequest(
-//                    "test",
-//                    "testing",
-//                    "testing@gmail.com",
-//                    "123"
-//            );
-//
-//            urlRepository.save(UserEntity.builder()
-//                    .firstName(req.firstName())
-//                    .lastName(req.lastName())
-//                    .userName(req.userName())
-//                    .password(req.password())
-//                    .build()
-//            );
-//
-//            AuthRequest authReq = new AuthRequest(req.userName(), req.password().concat("abc"));
-//
-//            mockMvc.perform(post("/user/auth")
-//                            .contentType(MediaType.APPLICATION_JSON)
-//                            .content(asJsonString(authReq))
-//                    )
-//                    .andDo(print())
-//                    .andExpect(status().isUnauthorized())
-//                    .andExpect(jsonPath("$.code").value(HttpStatus.UNAUTHORIZED.value()))
-//                    .andExpect(jsonPath("$.msg").value("wrong password or username"));
-//        }
+    }
+
+    @Nested
+    class GetURL {
+        @Test
+        @Rollback
+        @DisplayName("it should find an URL by shortCode")
+        public void findByShortCode() throws Exception {
+            TestUtils.UserData user = testUtils.createUser();
+
+            UserEntity userReference = new UserEntity().setId(user.getId());
+
+            ZonedDateTime now = ZonedDateTime.now();
+
+            UrlEntity url = UrlEntity.builder()
+                    .originalAddress("https://google.com.br")
+                    .shortCode("ABCD")
+                    .expirationAt(now.plusMinutes(5))
+                    .user(userReference)
+                    .build();
+
+            urlRepository.save(url);
+
+            mockMvc.perform(get("/url/".concat(url.getShortCode()))
+                            .contentType(MediaType.APPLICATION_JSON)
+                            .header("Authorization", "Bearer ".concat(user.getToken()))
+                    )
+                    .andDo(print())
+                    .andExpect(status().is3xxRedirection());
+        }
     }
 }
