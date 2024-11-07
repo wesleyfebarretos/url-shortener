@@ -1,4 +1,4 @@
-package com.spring.app.urlshorter.http;
+package com.spring.app.urlshorter.httpclient.feign.wizards;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
