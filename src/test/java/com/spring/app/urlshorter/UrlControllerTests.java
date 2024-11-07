@@ -61,6 +61,49 @@ public class UrlControllerTests extends BaseIntegrationTests {
 
             assertThat(urls.size()).isEqualTo(1);
         }
+
+        @Test
+        @Rollback
+        @DisplayName("it should not duplicate the url because there is already a recent one that is the same")
+        public void saveAnRecent() throws Exception {
+            TestUtils.UserData user = testUtils.createUser();
+
+            UserEntity userReference = new UserEntity().setId(user.getId());
+
+            ZonedDateTime now = ZonedDateTime.now();
+
+            UrlEntity url = UrlEntity.builder()
+                    .originalAddress("https://google.com.br")
+                    .shortCode("ABCD")
+                    .expirationAt(now.plusMinutes(5))
+                    .user(userReference)
+                    .build();
+
+            urlRepository.save(url);
+
+            SaveUrlRequest req = new SaveUrlRequest(url.getOriginalAddress());
+
+            mockMvc.perform(post("/url")
+                            .header("Authorization", "Bearer  " + user.getToken())
+                            .contentType(MediaType.APPLICATION_JSON)
+                            .content(asJsonString(req))
+                    )
+                    .andDo(print())
+                    .andExpect(status().isCreated())
+                    .andExpect(jsonPath("$.shortUrl").isNotEmpty());
+
+            List<UrlEntity> urls = urlRepository.findAll();
+
+            assertThat(url).extracting(UrlEntity::getOriginalAddress)
+                    .isEqualTo(req.url());
+
+            assertThat(url).extracting(UrlEntity::getShortCode)
+                    .isNotNull();
+
+            assertThat(url.getExpirationAt()).isAfter(ZonedDateTime.now());
+
+            assertThat(urls.size()).isEqualTo(1);
+        }
     }
 
     @Nested
