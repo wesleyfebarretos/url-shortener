@@ -26,7 +26,6 @@ public class UserControllerTests extends BaseIntegrationTests {
     @Nested
     class CreateUser {
         @Test
-        @Rollback
         @DisplayName("it should save an user")
         public void save() throws Exception {
             SaveUserRequest req = new SaveUserRequest(
@@ -54,7 +53,6 @@ public class UserControllerTests extends BaseIntegrationTests {
         }
 
         @Test
-        @Rollback
         @DisplayName("it should not save an user, cause has duplicated username")
         public void notSave() throws Exception {
             SaveUserRequest req = new SaveUserRequest(
@@ -118,7 +116,6 @@ public class UserControllerTests extends BaseIntegrationTests {
         }
 
         @Test
-        @Rollback
         @DisplayName("it should not authenticate an user")
         public void notAuth() throws Exception {
             SaveUserRequest req = new SaveUserRequest(

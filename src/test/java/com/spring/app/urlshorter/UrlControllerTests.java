@@ -30,7 +30,6 @@ public class UrlControllerTests extends BaseIntegrationTests {
     @Nested
     class CreateUrl {
         @Test
-        @Rollback
         @DisplayName("it should save an url")
         public void save() throws Exception {
             TestUtils.UserData user = testUtils.createUser();
@@ -63,7 +62,6 @@ public class UrlControllerTests extends BaseIntegrationTests {
         }
 
         @Test
-        @Rollback
         @DisplayName("it should not duplicate the url because there is already a recent one that is the same")
         public void saveAnRecent() throws Exception {
             TestUtils.UserData user = testUtils.createUser();
@@ -109,7 +107,6 @@ public class UrlControllerTests extends BaseIntegrationTests {
     @Nested
     class GetURL {
         @Test
-        @Rollback
         @DisplayName("it should find an URL by shortCode")
         public void findByShortCode() throws Exception {
             TestUtils.UserData user = testUtils.createUser();

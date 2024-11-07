@@ -26,7 +26,8 @@ import java.util.List;
 @AutoConfigureMockMvc
 @ActiveProfiles("test")
 @Transactional
-@Rollback(false)
+// Doesnt need @Roolback declaration because the standard behavior is to rollback after each test
+//@Rollback
 public abstract class BaseIntegrationTests {
     protected static final PostgreSQLContainer POSTGRES = new PostgreSQLContainer<>("postgres:16")
             .withEnv("POSTGRES_TZ", ZonedDateTime.now().getZone().getId());
@@ -38,13 +39,7 @@ public abstract class BaseIntegrationTests {
     protected ObjectMapper objectMapper;
 
     @Autowired
-    protected List<JpaRepository<?, ?>> repositories;
-
-    @Autowired
     protected TestUtils testUtils;
-
-    @Autowired
-    protected EntityManager entityManager;
 
 
     protected String asJsonString(final Object obj) {
