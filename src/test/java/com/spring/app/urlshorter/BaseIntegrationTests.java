@@ -2,30 +2,27 @@ package com.spring.app.urlshorter;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.spring.app.urlshorter.testutils.TestUtils;
-import jakarta.persistence.EntityManager;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.util.TestPropertyValues;
+import org.springframework.cloud.contract.wiremock.AutoConfigureWireMock;
 import org.springframework.context.ApplicationContextInitializer;
 import org.springframework.context.ConfigurableApplicationContext;
-import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.test.annotation.Rollback;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.transaction.annotation.Propagation;
 import org.testcontainers.containers.PostgreSQLContainer;
 
 import java.time.ZonedDateTime;
-import java.util.List;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @ContextConfiguration(initializers = {BaseIntegrationTests.Initializer.class})
 @AutoConfigureMockMvc
 @ActiveProfiles("test")
 @Transactional
+@AutoConfigureWireMock(port = 0)
 // Doesnt need @Roolback declaration because the standard behavior is to rollback after each test
 //@Rollback
 public abstract class BaseIntegrationTests {

@@ -22,3 +22,7 @@ spring:
     properties:
       hibernate:
         show_sql: true
+
+integration:
+  wizard-api:
+    url: http://localhost:${wiremock.server.port}

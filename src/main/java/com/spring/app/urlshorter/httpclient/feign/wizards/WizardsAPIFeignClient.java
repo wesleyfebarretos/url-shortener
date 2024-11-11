@@ -5,7 +5,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 
 import java.util.List;
 
-@FeignClient(name = "wizards", url = "https://wizard-world-api.herokuapp.com")
+@FeignClient(name = "wizards", url = "${integration.wizard-api.url}")
 public interface WizardsAPIFeignClient {
     @GetMapping(value = "/Elixirs", consumes = "application/json")
     List<Elixir> getExilirs();
