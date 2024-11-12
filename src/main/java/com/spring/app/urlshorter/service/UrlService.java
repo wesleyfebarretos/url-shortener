@@ -2,6 +2,7 @@ package com.spring.app.urlshorter.service;
 
 import com.spring.app.urlshorter.entity.UrlEntity;
 import com.spring.app.urlshorter.repository.UrlRepository;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -25,6 +26,7 @@ public class UrlService {
                 .orElseThrow(() -> new RuntimeException("short code not found"));
     }
 
+    @Transactional
     public UrlEntity save(UrlEntity url) {
         Optional<UrlEntity> oldUrl = urlRepository.findByOriginalAddressAndExpirationAtAfter(
                 url.getOriginalAddress(),
