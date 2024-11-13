@@ -1,4 +1,4 @@
-package com.spring.app.urlshorter;
+package com.spring.app.urlshorter.integration;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.spring.app.urlshorter.testutils.TestUtils;

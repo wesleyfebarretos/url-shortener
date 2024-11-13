@@ -1,4 +1,4 @@
-package com.spring.app.urlshorter;
+package com.spring.app.urlshorter.integration;
 
 import com.spring.app.urlshorter.controller.user.AuthRequest;
 import com.spring.app.urlshorter.controller.user.SaveUserRequest;

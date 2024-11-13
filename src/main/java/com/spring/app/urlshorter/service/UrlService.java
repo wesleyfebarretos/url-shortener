@@ -37,8 +37,7 @@ public class UrlService {
             return oldUrl.get();
         }
 
-        try {
-            MessageDigest md = MessageDigest.getInstance("MD5");
+        try { MessageDigest md = MessageDigest.getInstance("MD5");
             byte[] messageDigest = md.digest(url.getOriginalAddress().getBytes());
 
             StringBuilder hexString = new StringBuilder();

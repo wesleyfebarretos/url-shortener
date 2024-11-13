@@ -1,4 +1,4 @@
-package com.spring.app.urlshorter;
+package com.spring.app.urlshorter.integration;
 
 import com.spring.app.urlshorter.controller.url.SaveUrlRequest;
 import com.spring.app.urlshorter.entity.UrlEntity;
@@ -11,7 +11,6 @@ import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
-import org.springframework.test.annotation.Rollback;
 
 import java.time.ZonedDateTime;
 import java.util.List;

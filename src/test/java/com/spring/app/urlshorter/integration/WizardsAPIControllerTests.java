@@ -1,4 +1,4 @@
-package com.spring.app.urlshorter;
+package com.spring.app.urlshorter.integration;
 
 import com.github.tomakehurst.wiremock.client.WireMock;
 import com.spring.app.urlshorter.httpclient.feign.wizards.Elixir;
