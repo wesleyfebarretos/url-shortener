@@ -7,7 +7,14 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.time.Instant;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.Random;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.Future;
 import java.util.concurrent.locks.ReentrantLock;
 import java.util.stream.IntStream;
 
@@ -68,6 +75,54 @@ public class ThreadTests {
             }
         });
 
+    }
+
+    @Test
+    @DisplayName("thread test4")
+    public void testSyncronized4() {
+        Random random = new Random();
+        List<Future<Future<Map.Entry<Integer, Instant>>>> futures = new ArrayList<>();
+
+        for (int id = 0; id < 10; id++) {
+            int finalId = id;
+            futures.add(
+                    CompletableFuture.supplyAsync(() -> {
+                        try {
+                            Thread.sleep(random.nextInt(10));
+                        } catch (InterruptedException e) {
+                            throw new RuntimeException(e);
+                        }
+
+                        return finalId;
+                    }).thenApply((idx) -> CompletableFuture.supplyAsync(() -> {
+                        try {
+                            Thread.sleep(random.nextInt(10));
+                        } catch (InterruptedException e) {
+                            throw new RuntimeException(e);
+                        }
+
+                        return Map.entry(idx, Instant.now());
+                    })));
+
+            try {
+                Thread.sleep(4);
+            } catch (InterruptedException e) {
+                throw new RuntimeException(e);
+            }
+        }
+
+        futures.stream()
+                .map(x -> {
+                    try {
+                        return x.get().get();
+                    } catch (InterruptedException e) {
+                        throw new RuntimeException(e);
+                    } catch (ExecutionException e) {
+                        throw new RuntimeException(e);
+                    }
+                })
+                .sorted(Map.Entry.comparingByValue())
+                .forEach(System.out::println);
     }
 
     public synchronized void printI(int i) {
