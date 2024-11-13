@@ -1,11 +1,13 @@
 package com.spring.app.urlshorter.unit;
 
+import net.minidev.json.JSONUtil;
 import org.apache.groovy.util.ObjectHolder;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.locks.ReentrantLock;
 import java.util.stream.IntStream;
 
@@ -37,6 +39,37 @@ public class ThreadTests {
         });
     }
 
+    @Test
+    @DisplayName("thread test2")
+    public void testSyncronized2() {
+        var futures = IntStream.rangeClosed(1, 100).mapToObj((i) -> {
+            return CompletableFuture.runAsync(() -> {
+                printI(i);
+            });
+        }).toArray(CompletableFuture[]::new);
+
+        CompletableFuture.allOf(futures).join();
+    }
+
+    @Test
+    @DisplayName("thread test3")
+    public void testSyncronized3() {
+        var futures = IntStream.rangeClosed(1, 100).mapToObj((i) -> {
+            return CompletableFuture.supplyAsync(() -> {
+                return printI2(i);
+            });
+        }).toList();
+
+        futures.forEach(integerCompletableFuture -> {
+            try {
+                System.out.println(integerCompletableFuture.get());
+            } catch (Exception e) {
+                throw new RuntimeException(e);
+            }
+        });
+
+    }
+
     public synchronized void printI(int i) {
         try {
             System.out.println(i);
@@ -44,6 +77,16 @@ public class ThreadTests {
         } catch (Exception e) {
             System.out.println(e);
         }
+    }
+
+    public synchronized int printI2(int i) {
+        try {
+            Thread.sleep((long) (Math.random() * 100));
+            return i;
+        } catch (Exception e) {
+            System.out.println(e);
+        }
+        return i;
     }
 
     public void printWithLock(int i) {
