@@ -1,0 +1,10 @@
+apiVersion: kargo.akuity.io/v1alpha1
+kind: Warehouse
+metadata:
+  name: url-shortener
+  namespace: url-shortener
+spec:
+  subscriptions:
+    - git:
+        repoURL: https://github.com/wesleyfebarretos/url-shortener.git
+        branch: main
