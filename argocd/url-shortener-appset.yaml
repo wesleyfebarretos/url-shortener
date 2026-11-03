@@ -13,25 +13,31 @@ spec:
     - list:
         elements:
           - namespace: url-shortener-dev
-            project: url-shortener
             sources:
               - repoURL: https://github.com/wesleyfebarretos/url-shortener.git
                 path: manifests
-                targetRevision: main
+                targetRevision: stage/dev
+          - namespace: url-shortener-uat
+            sources:
+              - repoURL: https://github.com/wesleyfebarretos/url-shortener.git
+                path: manifests
+                targetRevision: stage/uat
+          - namespace: url-shortener-prod
+            sources:
+              - repoURL: https://github.com/wesleyfebarretos/url-shortener.git
+                path: manifests
+                targetRevision: stage/prod
   template:
     metadata:
       name: "{{ .namespace }}"
       labels:
         app.kubernetes.io/name: "{{ .namespace }}"
     spec:
-      project: "{{ .project }}"
+      project: "url-shortener"
       destination:
         server: https://kubernetes.default.svc
         namespace: "{{ .namespace }}"
       syncPolicy:
-        automated:
-          prune: true
-          selfHeal: true
         syncOptions:
           - CreateNamespace=true
           - ServerSideApply=true
