@@ -1,0 +1,41 @@
+# yaml-language-server: $schema=https://raw.githubusercontent.com/argoproj/argo-cd/master/manifests/crds/applicationset-crd.yaml
+apiVersion: argoproj.io/v1alpha1
+kind: ApplicationSet
+metadata:
+  name: url-shortener-appset
+  namespace: url-shortener
+  finalizers:
+    - resources-finalizer.argocd.argoproj.io
+spec:
+  goTemplate: true
+  goTemplateOptions: ["missingkey=error"]
+  generators:
+    - list:
+        elements:
+          - namespace: url-shortener-dev
+            project: url-shortener
+            sources:
+              - repoURL: https://github.com/wesleyfebarretos/url-shortener.git
+                path: manifests
+                targetRevision: main
+  template:
+    metadata:
+      name: "{{ .namespace }}"
+      labels:
+        app.kubernetes.io/name: "{{ .namespace }}"
+    spec:
+      project: "{{ .project }}"
+      destination:
+        server: https://kubernetes.default.svc
+        namespace: "{{ .namespace }}"
+      syncPolicy:
+        automated:
+          prune: true
+          selfHeal: true
+        syncOptions:
+          - CreateNamespace=true
+          - ServerSideApply=true
+          - ApplyOutOfSyncOnly=true
+  templatePatch: |
+    spec:
+      sources: {{ .sources | toJson }}
